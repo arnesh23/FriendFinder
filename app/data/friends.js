@@ -1,7 +1,6 @@
 
 
-var playerScore = []
-
+// make list of friends
 var friendArray = [
     {
     "name":"Maira",
@@ -60,15 +59,9 @@ var friendArray = [
   }
 ]
 
-$('#submitButton').on('click', function(event) {
-  event.preventDefault();
- console.log("hello")
- console.log($('input[type=radio][name=color]:checked').attr('id'))
- console.log($('input[type=radio][name=season]:checked').attr('id'))
- console.log($('input[type=radio][name=drink]:checked').attr('id'))
- console.log($('input[type=radio][name=hobby]:checked').attr('id'))
- console.log($('input[type=radio][name=vacation]:checked').attr('id'))
+// once submit is clicked build an array of scores
+module.exports = friendArray;
 
-});
+
   
   
