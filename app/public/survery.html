@@ -7,7 +7,9 @@
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-  
+  <script src="https://code.jquery.com/jquery.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
 
 </head>
 <body>
@@ -65,9 +67,110 @@
       
     </div>
 
-    <script type="text/javascript" 
-    src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="../data/friends.js"></script>
+    <div id="myModal" class="modal">
+
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <p>Your Best Match:</p>
+        <div id = "buddypic"></div>
+      </div>
+    
+    </div>
 
 </body>
+
+
+<script type="text/javascript">
+
+playerScore = [];
+
+$('#submitButton').on('click', function(event) {
+  //event.preventDefault();
+ console.log("hello")
+ console.log($('input[type=radio][name=color]:checked').attr('id'))
+ console.log($('input[type=radio][name=season]:checked').attr('id'))
+ console.log($('input[type=radio][name=drink]:checked').attr('id'))
+ console.log($('input[type=radio][name=hobby]:checked').attr('id'))
+ console.log($('input[type=radio][name=vacation]:checked').attr('id'))
+
+ playerScore.push($('input[type=radio][name=color]:checked').attr('id'));
+ playerScore.push($('input[type=radio][name=season]:checked').attr('id'));
+ playerScore.push($('input[type=radio][name=drink]:checked').attr('id'));
+ playerScore.push($('input[type=radio][name=hobby]:checked').attr('id'));
+ playerScore.push($('input[type=radio][name=vacation]:checked').attr('id'));
+
+console.log(playerScore);
+
+$.ajax({ url: "/api/survey", method: "GET" })
+      .then(function(friendsData) {
+        var scoreArray = [];
+        //loop through each friend from friendsData and calculate score
+        console.log(friendsData.length)
+        for(var i = 0; i < friendsData.length; i++)
+        {
+          var score = 0;
+          for(var j = 0; j < playerScore.length; j++){
+             score = score + Math.abs(friendsData[i].scores[j]-playerScore[j])
+          }
+          scoreArray.push({friend:friendsData[i].name,totalscore:score})
+          console.log("scoreArrayfriend"+scoreArray[i].friend)
+          console.log("scoreArrayTotalscore"+scoreArray[i].totalscore)
+        }
+
+        var lowestScorer = scoreArray[0]
+        //find lowestScorer
+        for(var i = 1; i < scoreArray.length; i++)
+        {
+          if(lowestScorer.totalscore > scoreArray[i].totalscore)
+            lowestScorer = scoreArray[i]
+        }
+
+        console.log("lowestScoreName"+lowestScorer.friend)
+        console.log("lowestScoreTotalScore"+lowestScorer.totalscore)
+
+        var lowestScorerIndex = 0;
+
+        //lowestScorer index
+        for(var i = 0; i < friendsData.length; i++){
+          console.log("comapring"+lowestScorer.friend+"   "+friendsData[i].name)
+          if(lowestScorer.friend === friendsData[i].name)
+          { 
+            lowestScorerIndex = i;
+          }
+        }
+
+        console.log("lowestscorerindex"+lowestScorerIndex)
+
+
+       //modal 
+        var modal = document.getElementById('myModal');
+        var span = document.getElementsByClassName("close")[0];
+
+      //get id of image in modal
+        var body = $("body");
+        var modalImage = body.find("#buddypic");
+        modalImage.empty()
+
+        //append to HTML Page
+        var friendImage = $("<img>");
+        friendImage.attr('src',friendsData[lowestScorerIndex].photo)
+        modalImage.append(friendImage)
+
+
+        //modal style
+        modal.style.display = "block"
+
+        span.onclick = function() {
+        modal.style.display = "none";
+        }
+
+
+
+      });
+
+});
+
+
+</script>
 </html>

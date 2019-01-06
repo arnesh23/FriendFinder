@@ -18,7 +18,8 @@ module.exports = function(app) {
   // (ex: localhost:PORT/api/admin... they are shown a JSON of the data in the table)
   // ---------------------------------------------------------------------------
 
-  app.get("/api/survery", function(req, res) {
+  app.get("/api/survey", function(req, res) {
+   // console.log("calling get"+friendData);
     res.json(friendData);
   });
 
